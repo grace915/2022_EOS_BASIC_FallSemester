@@ -18,9 +18,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.eos.airqualitylayout_permission.databinding.ActivityMainBinding
+import com.eos.airqualitylayout_permission.retrofit.AirQualityResponse
+import com.eos.airqualitylayout_permission.retrofit.AirQualityService
+import com.eos.airqualitylayout_permission.retrofit.RetrofitConnection
+import retrofit2.Call
+import retrofit2.Response
 import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.util.*
+import javax.security.auth.callback.Callback
 
 // https://www.iqair.com/ko/ -> API key 받기
 
@@ -78,6 +84,31 @@ class MainActivity : AppCompatActivity() {
         return addresses[0]
     }
 
+    // 미세먼지 오염 정보 가져오기
+    private fun getAirQualityData(latitude: Double, longitude: Double) {
+        // 레트로핏 객체를 이용해 airqualityservice 인터페이스 구현체를 가져온다
+        val retrofitAPI = RetrofitConnection.getInstance().create(
+            AirQualityService::class.java
+        )
+        retrofitAPI.getAirQualityData(
+            latitude.toString(),
+            longitude.toString(),
+            "ddff6e59-84f1-464b-a921-0aeb59ed40d0"
+        ).enqueue(object : Callback<AirQualityResponse>, retrofit2.Callback<AirQualityResponse> {
+            override fun onResponse(
+                call: Call<AirQualityResponse>,
+                response: Response<AirQualityResponse>
+            ) {
+                // 정상적인 response가 왔다면 UI 업데이트
+            }
+
+            override fun onFailure(call: Call<AirQualityResponse>, t: Throwable) {
+               // 실패
+            }
+
+
+        })
+    }
     @SuppressLint("SetTextI18n")
     private fun updateUI() {
         locationProvider = LocationProvider(this@MainActivity)
@@ -98,6 +129,7 @@ class MainActivity : AppCompatActivity() {
 
 
             // 2. 현재 미세먼지 농도 가져오고 UI 업데이트
+            getQirQualityData(latitude, longitude)
         } else {
             Toast.makeText(
                 this@MainActivity,
