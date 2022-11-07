@@ -30,21 +30,25 @@ class LocationProvider(private val context: Context) : LocationListener {
 
             var gpsLocation: Location? = null
             var networkLocation: Location? = null
-
+            
+            // GPS provider와 network provider가 활성화되어 있는지 확인
             val isGPSEnabled: Boolean = locationManager!!.isProviderEnabled(
                 LocationManager.GPS_PROVIDER)
             val isNetworkEnabled: Boolean = locationManager!!.isProviderEnabled(
                 LocationManager.NETWORK_PROVIDER)
 
             if (!isGPSEnabled && !isNetworkEnabled) {
+                // GPS, network provider 둘다 사용 불가능한 상황이면 null 반환
                 return null
             } else {
                 val hasFineLocationPermission = ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.ACCESS_FINE_LOCATION)
+                // 정말한 위치 정보
                 val hasCoarseLocationPermission = ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.ACCESS_COARSE_LOCATION)
+                // 도시 block 단위
 
                 // 위 두 개의 권한이 모두 없다면 null 을 반환
                 if (hasFineLocationPermission != PackageManager.PERMISSION_GRANTED
@@ -67,11 +71,13 @@ class LocationProvider(private val context: Context) : LocationListener {
                         this
                     )
                      */
+                    // 위치 가져오기
                     gpsLocation = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                 }
 
                 // 정확도 비교하기
                 return if (gpsLocation != null && networkLocation != null) {
+                    // 위치 두개이면 정확도 높은거 설정
                     if (gpsLocation.accuracy > networkLocation.accuracy) {
                         location = gpsLocation
                         gpsLocation
@@ -80,6 +86,7 @@ class LocationProvider(private val context: Context) : LocationListener {
                         networkLocation
                     }
                 } else {
+                    // 가능한 위치 정보가 한개만 있을 때
                     gpsLocation ?: networkLocation
                 }
 
@@ -89,11 +96,12 @@ class LocationProvider(private val context: Context) : LocationListener {
         }
         return location
     }
-
+    
+    // 위치 정보 가져오는 함수
     fun getLocationLatitude() : Double {
         return location?.latitude ?: 0.0
     }
-
+    // 경도 정보 가져오는 함수
     fun getLocationLongitude() : Double {
         return location?.longitude ?: 0.0
     }

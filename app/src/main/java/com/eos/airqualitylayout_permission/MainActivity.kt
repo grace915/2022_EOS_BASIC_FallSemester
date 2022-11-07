@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
 
             if (checkResult) {
                 // 위칫값을 가져올 수 있음
-//                updateUI()
+                updateUI()
             } else {
                 // 거부되었다면
                 Toast.makeText(
