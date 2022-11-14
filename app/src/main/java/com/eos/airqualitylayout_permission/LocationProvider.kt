@@ -6,8 +6,8 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.core.content.ContextCompat
-import java.lang.Exception
 
 class LocationProvider(private val context: Context) : LocationListener {
     // Location 은 위도, 경도, 고도와 같이 위치에 관련된 정보를 가지고 있는 클래스
@@ -15,11 +15,13 @@ class LocationProvider(private val context: Context) : LocationListener {
     private var location: Location? = null
     private var locationManager: LocationManager? = null
 
-    private val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 10L
-    private val MIN_TIME_BW_UPDATES: Float = 1000*60F
+    // private val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 10L
+    // private val MIN_TIME_BW_UPDATES: Float = 1000*60F
 
     init {
-        getLocation()
+        location = getLocation()
+
+        Log.d("gaeun", "${getLocation()}")
     }
 
     private fun getLocation() : Location? {
@@ -74,7 +76,6 @@ class LocationProvider(private val context: Context) : LocationListener {
                     // 위치 가져오기
                     gpsLocation = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                 }
-
                 // 정확도 비교하기
                 return if (gpsLocation != null && networkLocation != null) {
                     // 위치 두개이면 정확도 높은거 설정
@@ -99,6 +100,7 @@ class LocationProvider(private val context: Context) : LocationListener {
     
     // 위치 정보 가져오는 함수
     fun getLocationLatitude() : Double {
+
         return location?.latitude ?: 0.0
     }
     // 경도 정보 가져오는 함수
